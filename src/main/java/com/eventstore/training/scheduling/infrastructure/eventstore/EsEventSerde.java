@@ -1,0 +1,107 @@
+package com.eventstore.training.scheduling.infrastructure.eventstore;
+
+import com.eventstore.dbclient.ProposedEvent;
+import com.eventstore.dbclient.ResolvedEvent;
+import com.eventstore.training.scheduling.domain.slot.writemodel.event.Booked;
+import com.eventstore.training.scheduling.domain.slot.writemodel.event.Cancelled;
+import com.eventstore.training.scheduling.domain.slot.writemodel.event.Scheduled;
+import com.eventstore.training.scheduling.eventsourcing.Event;
+import com.eventstore.training.scheduling.eventsourcing.EventEnvelope;
+import com.eventstore.training.scheduling.eventsourcing.EventMetadata;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.vavr.control.Try;
+import lombok.val;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+import static io.vavr.API.*;
+import static io.vavr.Predicates.instanceOf;
+import static io.vavr.Predicates.is;
+
+public class EsEventSerde {
+  ObjectMapper objectMapper = new ObjectMapper();
+
+  public ProposedEvent serialise(Event event) {
+    UUID eventId = UUID.randomUUID();
+    val data = objectMapper.createObjectNode();
+    return Match(event)
+        .of(
+            Case(
+                $(instanceOf(Scheduled.class)),
+                scheduled -> {
+                  data.put("slotId", scheduled.getSlotId());
+                  data.put("startTime", scheduled.getStartTime().toString());
+                  data.put("duration", scheduled.getDuration().toString());
+                  return toProposedEvent("scheduled", eventId, data);
+                }),
+            Case(
+                $(instanceOf(Booked.class)),
+                booked -> {
+                  data.put("slotId", booked.getSlotId());
+                  data.put("patientId", booked.getPatientId());
+                  return toProposedEvent("booked", eventId, data);
+                }),
+            Case(
+                $(instanceOf(Cancelled.class)),
+                cancelled -> {
+                  data.put("slotId", cancelled.getSlotId());
+                  data.put("reason", cancelled.getReason());
+                  return toProposedEvent("cancelled", eventId, data);
+                }));
+  }
+
+  private ProposedEvent toProposedEvent(String eventType, UUID eventId, ObjectNode dataNode) {
+    try {
+      return new ProposedEvent(
+          eventId,
+          eventType,
+          "application/json",
+          objectMapper.writeValueAsBytes(dataNode),
+          objectMapper.writeValueAsBytes(objectMapper.createObjectNode()));
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+  public Try<EventEnvelope> deserialise(ResolvedEvent event) {
+    return Try.of(
+        () -> {
+          val data = objectMapper.readTree(event.getEvent().getEventData());
+          val deserialized =
+              Match(event.getEvent().getEventType())
+                  .of(
+                      Case(
+                          $(is("scheduled")),
+                          () ->
+                              new Scheduled(
+                                  data.get("slotId").asText(),
+                                  LocalDateTime.parse(data.get("startTime").asText()),
+                                  Duration.parse(data.get("duration").asText()))),
+                      Case(
+                          $(is("booked")),
+                          () ->
+                              new Booked(
+                                  data.get("slotId").asText(),
+                                  data.get("patientId").asText())),
+                      Case(
+                          $(is("cancelled")),
+                          () ->
+                              new Cancelled(
+                                  data.get("slotId").asText(),
+                                  data.get("reason").asText())));
+
+          return new EventEnvelope(
+              deserialized,
+              new EventMetadata(
+                  Option(event.getLink())
+                      .getOrElse(event.getEvent())
+                      .getStreamRevision()
+                      .getValueUnsigned()));
+        });
+  }
+}
