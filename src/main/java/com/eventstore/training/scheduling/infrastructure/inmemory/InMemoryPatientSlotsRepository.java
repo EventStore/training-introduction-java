@@ -1,8 +1,8 @@
 package com.eventstore.training.scheduling.infrastructure.inmemory;
 
-import com.eventstore.training.scheduling.domain.slot.readmodel.patientslots.AvailableSlot;
-import com.eventstore.training.scheduling.domain.slot.readmodel.patientslots.PatientSlot;
-import com.eventstore.training.scheduling.domain.slot.readmodel.patientslots.PatientSlotsRepository;
+import com.eventstore.training.scheduling.domain.readmodel.patientslots.AvailableSlot;
+import com.eventstore.training.scheduling.domain.readmodel.patientslots.PatientSlot;
+import com.eventstore.training.scheduling.domain.readmodel.patientslots.PatientSlotsRepository;
 import io.vavr.collection.HashMap;
 import io.vavr.collection.List;
 import io.vavr.collection.Map;

@@ -1,57 +1,56 @@
 package com.eventstore.training.scheduling.eventsourcing;
 
+import com.eventstore.training.scheduling.infrastructure.commands.CommandHandler;
+import com.eventstore.training.scheduling.infrastructure.commands.CommandHandlerMap;
+import com.eventstore.training.scheduling.infrastructure.commands.Dispatcher;
 import io.vavr.collection.List;
-import io.vavr.control.Try;
-import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
+import lombok.SneakyThrows;
 
-import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.util.UUID;
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public abstract class AggregateTest<A extends Aggregate<A, ?>> {
-  protected A aggregate;
-  protected Clock clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
-  private Try<List<? extends Event>> result;
+public abstract class AggregateTest<A extends AggregateRoot> {
+    private Dispatcher dispatcher;
+    protected final AggregateStore aggregateStore;
+    private final AggregateRoot aggregate;
+    private Throwable exception;
 
-  protected String randomString() {
-    return UUID.randomUUID().toString();
-  }
+    protected abstract AggregateRoot newInstance();
 
-  @BeforeEach
-  void beforeEach() {
-    aggregate = newInstance();
-    result = null;
-  }
+    public AggregateTest() {
+        aggregate = newInstance();
+        aggregateStore = new FakeAggregateStore(aggregate);
+    }
 
-  protected void given(Event... events) {
-    aggregate.reconstitute(List.of(events));
-  }
+    public <CH extends CommandHandler> void registerHandlers(CH commandHandler) {
+        dispatcher = new Dispatcher(new CommandHandlerMap(commandHandler));
+    }
 
-  protected void when(Command command) {
-    result =
-        Try.of(
-            () -> {
-              aggregate.handle(command);
-              return aggregate.getChanges();
-            });
-  }
+    protected void given(Object... events) {
+        exception = null;
+        aggregate.load(List.of(events));
+    }
 
-  protected void then(Event event) {
-    List<? extends Event> changes = result.get();
-    assertEquals(changes, List.of(event));
+    protected void when(Object command) {
+        try {
+            aggregate.clearChanges();
+            dispatcher.dispatch(command);
+        } catch (Throwable e) {
+            exception = e;
+        }
+    }
 
-    val version = aggregate.getVersion();
-    aggregate.markAsCommitted();
-    assertEquals(aggregate.getVersion(), version + changes.length());
-  }
+    @SneakyThrows
+    protected void then(Consumer<List<Object>> events) {
+        if (exception != null) {
+            throw exception;
+        }
 
-  protected void then(Error error) {
-    assertEquals(error, result.failed().get());
-  }
+        events.accept(aggregate.getChanges());
+    }
 
-  protected abstract A newInstance();
+    protected <E extends Throwable> void then(Class<E> clazz) {
+        assertEquals(clazz, exception.getClass());
+    }
 }

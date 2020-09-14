@@ -1,7 +1,7 @@
 package com.eventstore.training.scheduling.infrastructure.inmemory;
 
-import com.eventstore.training.scheduling.domain.slot.readmodel.availableslots.AvailableSlot;
-import com.eventstore.training.scheduling.domain.slot.readmodel.availableslots.AvailableSlotsRepository;
+import com.eventstore.training.scheduling.domain.readmodel.availableslots.AvailableSlot;
+import com.eventstore.training.scheduling.domain.readmodel.availableslots.AvailableSlotsRepository;
 import io.vavr.collection.List;
 
 import java.time.LocalDate;
