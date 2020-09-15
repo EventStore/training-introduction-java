@@ -55,63 +55,20 @@ public class PatientSlotsProjectionTest extends ProjectionTest {
     then(List.empty(), repository.getPatientSlots(patientId));
   }
 
+  // Test 9
   @Test
   void shouldReturnASlotIfWasBooked() {
-    val scheduled = new Scheduled(slotId, now, tenMinutes);
-    val booked = new Booked(scheduled.getSlotId(), patientId);
 
-    given(scheduled, booked);
-    then(
-        List.of(
-            new PatientSlot(
-                scheduled.getSlotId(),
-                scheduled.getStartTime(),
-                scheduled.getDuration(),
-                "booked")),
-        repository.getPatientSlots(patientId));
   }
 
+  // Test 10
   @Test
   void shouldReturnASlotIfWasCanceled() {
-    val scheduled = new Scheduled(slotId, now, tenMinutes);
-    val booked = new Booked(scheduled.getSlotId(), patientId);
-    val cancelled = new Cancelled(scheduled.getSlotId(), randomString());
 
-    given(scheduled, booked, cancelled);
-    then(
-        List.of(
-            new PatientSlot(
-                scheduled.getSlotId(),
-                scheduled.getStartTime(),
-                scheduled.getDuration(),
-                "cancelled")),
-        repository.getPatientSlots(patientId));
   }
 
   @Test
   void shouldReturnBothCancelledAndBooked() {
-    val scheduled = new Scheduled(slotId, now, tenMinutes);
-    val booked = new Booked(scheduled.getSlotId(), patientId);
-    val cancelled = new Cancelled(scheduled.getSlotId(), randomString());
-    String patientId2 = patientId + "-2";
-    val booked2 = new Booked(scheduled.getSlotId(), patientId2);
 
-    given(scheduled, booked, cancelled, booked2);
-    then(
-        List.of(
-            new PatientSlot(
-                scheduled.getSlotId(),
-                scheduled.getStartTime(),
-                scheduled.getDuration(),
-                "cancelled")),
-        repository.getPatientSlots(patientId));
-    then(
-        List.of(
-            new PatientSlot(
-                scheduled.getSlotId(),
-                scheduled.getStartTime(),
-                scheduled.getDuration(),
-                "booked")),
-        repository.getPatientSlots(patientId2));
   }
 }

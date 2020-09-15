@@ -22,14 +22,10 @@ public class InMemoryAvailableSlotsRepository implements AvailableSlotsRepositor
 
   @Override
   public void markAsUnavailable(String slotId) {
-    booked = booked.appendAll(available.filter(slot -> slot.getSlotId().equals(slotId)));
-    available = available.filter(slot -> !slot.getSlotId().equals(slotId));
   }
 
   @Override
   public void markAsAvailable(String slotId) {
-    available = available.appendAll(booked.filter(slot -> slot.getSlotId().equals(slotId)));
-    booked = booked.filter(slot -> !slot.getSlotId().equals(slotId));
   }
 
   @Override

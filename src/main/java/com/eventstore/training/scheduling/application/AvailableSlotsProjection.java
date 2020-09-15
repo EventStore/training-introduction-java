@@ -9,14 +9,9 @@ import com.eventstore.training.scheduling.infrastructure.projections.Projection;
 
 public class AvailableSlotsProjection extends Projection {
     public AvailableSlotsProjection(AvailableSlotsRepository repository) {
-        when(Scheduled.class, scheduled -> repository.add(
-                    new AvailableSlot(
-                            scheduled.getSlotId(),
-                            scheduled.getStartTime(),
-                            scheduled.getDuration())));
+        when(Scheduled.class, scheduled -> repository.add(null));
 
-        when(Booked.class, booked -> repository.markAsUnavailable(booked.getSlotId()));
+//        when(Booked.class, );
 
-        when(Cancelled.class, cancelled -> repository.markAsAvailable(cancelled.getSlotId()));
     }
 }

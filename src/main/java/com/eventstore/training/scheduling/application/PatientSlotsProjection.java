@@ -16,9 +16,5 @@ public class PatientSlotsProjection extends Projection {
                         scheduled.getStartTime(),
                         scheduled.getDuration()))
         );
-
-        when(Booked.class, booked -> repository.markAsBooked(booked.getSlotId(), booked.getPatientId()));
-
-        when(Cancelled.class, cancelled -> repository.markAsCancelled(cancelled.getSlotId()));
     }
 }

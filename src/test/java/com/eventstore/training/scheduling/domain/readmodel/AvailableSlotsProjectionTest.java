@@ -41,6 +41,7 @@ public class AvailableSlotsProjectionTest extends ProjectionTest {
     projection = new AvailableSlotsProjection(repository);
   }
 
+  // Test 6
   @Test
   void shouldAddSlotToTheList() {
     val scheduled = new Scheduled(slotId, now, tenMinutes);
@@ -53,6 +54,7 @@ public class AvailableSlotsProjectionTest extends ProjectionTest {
         repository.getSlotsAvailableOn(LocalDate.now()));
   }
 
+  // Test 7
   @Test
   void shouldRemoveSlotFromTheListIfItWasBooked() {
     val scheduled = new Scheduled(slotId, now, tenMinutes);
@@ -62,17 +64,8 @@ public class AvailableSlotsProjectionTest extends ProjectionTest {
     then(List.empty(), repository.getSlotsAvailableOn(LocalDate.now()));
   }
 
+  // Test 8
   @Test
   void shouldAddSlotAgainIfBookingWasCancelled() {
-    val scheduled = new Scheduled(slotId, now, tenMinutes);
-    val booked = new Booked(scheduled.getSlotId(), randomString());
-    val cancelled = new Cancelled(scheduled.getSlotId(), randomString());
-
-    given(scheduled, booked, cancelled);
-    then(
-        List.of(
-            new AvailableSlot(
-                scheduled.getSlotId(), scheduled.getStartTime(), scheduled.getDuration())),
-        repository.getSlotsAvailableOn(LocalDate.now()));
   }
 }

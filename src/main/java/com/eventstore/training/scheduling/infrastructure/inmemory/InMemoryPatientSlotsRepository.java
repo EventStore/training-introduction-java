@@ -25,54 +25,10 @@ public class InMemoryPatientSlotsRepository implements PatientSlotsRepository {
 
   @Override
   public void markAsBooked(String slotId, String patientId) {
-    PatientSlot updated =
-        available
-            .filter(slot -> slot.getSlotId().equals(slotId))
-            .map(
-                available ->
-                    new PatientSlot(
-                        available.getSlotId(),
-                        available.getStartTime(),
-                        available.getDuration(),
-                        "booked"))
-            .head();
-    patientSlots =
-        patientSlots.put(
-            patientId, patientSlots.getOrElse(patientId, List.empty()).append(updated));
-    available = available.filter(slot -> !slot.getSlotId().equals(slotId));
   }
 
   @Override
   public void markAsCancelled(String slotId) {
-    val tuple =
-        patientSlots
-            .filterValues(slots -> slots.filter(slot -> slot.getSlotId().equals(slotId)).nonEmpty())
-            .mapValues(Traversable::head)
-            .head();
-    val patientId = tuple._1;
-    val cancelledSlot = tuple._2;
-
-    patientSlots =
-        patientSlots.put(
-            patientId,
-            patientSlots
-                .getOrElse(patientId, List.empty())
-                .map(
-                    slot -> {
-                      if (slot.getSlotId().equals(slotId)) {
-                        return new PatientSlot(
-                            slot.getSlotId(), slot.getStartTime(), slot.getDuration(), "cancelled");
-                      } else {
-                        return slot;
-                      }
-                    }));
-
-    available =
-        available.append(
-            new AvailableSlot(
-                cancelledSlot.getSlotId(),
-                cancelledSlot.getStartTime(),
-                cancelledSlot.getDuration()));
   }
 
   @Override
