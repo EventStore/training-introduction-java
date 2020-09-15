@@ -4,7 +4,6 @@ import com.eventstore.training.scheduling.domain.writemodel.command.Book;
 import com.eventstore.training.scheduling.domain.writemodel.command.Cancel;
 import com.eventstore.training.scheduling.domain.writemodel.command.Handlers;
 import com.eventstore.training.scheduling.domain.writemodel.command.Schedule;
-import com.eventstore.training.scheduling.domain.slot.writemodel.error.*;
 import com.eventstore.training.scheduling.domain.writemodel.event.Booked;
 import com.eventstore.training.scheduling.domain.writemodel.event.Cancelled;
 import com.eventstore.training.scheduling.domain.writemodel.event.Scheduled;
