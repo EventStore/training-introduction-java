@@ -38,11 +38,9 @@ public class SlotAggregate extends AggregateRoot {
     }
 
     private void when(Booked booked) {
-        ;
     }
 
     private void when(Cancelled cancelled) {
-
     }
 
     private void when(Scheduled scheduled) {
