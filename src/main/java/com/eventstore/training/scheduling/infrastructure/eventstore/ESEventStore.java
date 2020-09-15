@@ -31,7 +31,7 @@ public class ESEventStore implements EventStore {
         if (version == -1L) {
             client.appendToStream(streamName, SpecialStreamRevision.NO_STREAM, preparedEvents);
         } else {
-            client.appendToStream(streamName, new StreamRevision(version), preparedEvents);
+            client.appendToStream(streamName, ExpectedRevision.expectedRevision(version), preparedEvents);
         }
     }
 

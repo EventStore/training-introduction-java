@@ -1,7 +1,7 @@
 package com.eventstore.training.scheduling;
 
+import com.eventstore.dbclient.EventStoreConnection;
 import com.eventstore.dbclient.StreamsClient;
-import com.eventstore.dbclient.Timeouts;
 import com.eventstore.dbclient.UserCredentials;
 import com.eventstore.training.scheduling.application.AvailableSlotsProjection;
 import com.eventstore.training.scheduling.application.PatientSlotsProjection;
@@ -17,9 +17,6 @@ import com.eventstore.training.scheduling.infrastructure.inmemory.InMemoryAvaila
 import com.eventstore.training.scheduling.infrastructure.inmemory.InMemoryPatientSlotsRepository;
 import com.eventstore.training.scheduling.infrastructure.projections.DbProjector;
 import com.eventstore.training.scheduling.infrastructure.projections.SubscriptionManager;
-import io.grpc.netty.shaded.io.grpc.netty.GrpcSslContexts;
-import io.grpc.netty.shaded.io.netty.handler.ssl.SslContext;
-import io.grpc.netty.shaded.io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.vavr.collection.List;
 import lombok.val;
 import org.springframework.context.annotation.Bean;
@@ -27,7 +24,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-import javax.net.ssl.SSLException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -39,16 +35,13 @@ public class AppConfig {
     private final Dispatcher dispatcher;
     private final SubscriptionManager subscriptionManager;
 
-    public AppConfig() throws SSLException {
-        SslContext sslContext =
-                GrpcSslContexts.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build();
-        StreamsClient client =
-                new StreamsClient(
-                        "localhost",
-                        2113,
-                        new UserCredentials("admin", "changeit"),
-                        Timeouts.DEFAULT,
-                        sslContext);
+    public AppConfig() {
+        StreamsClient client = EventStoreConnection
+                .builder()
+                .insecure()
+                .defaultUserCredentials(new UserCredentials("admin", "changeit"))
+                .createSingleNodeConnection("localhost", 2113)
+                .newStreamsClient();
         EventStore eventStore = new ESEventStore(client);
         val aggregateStore = new EsAggregateStore(eventStore);
         availableSlotsRepository = new InMemoryAvailableSlotsRepository();
