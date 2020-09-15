@@ -15,8 +15,8 @@ public class AvailableSlotsProjection extends Projection {
                             scheduled.getStartTime(),
                             scheduled.getDuration())));
 
-        when(Booked.class, booked -> repository.markAsUnavailable(booked.getSlotId()));
-
-        when(Cancelled.class, cancelled -> repository.markAsAvailable(cancelled.getSlotId()));
+//        when(Booked.class, booked -> repository.markAsUnavailable(booked.getSlotId()));
+//
+//        when(Cancelled.class, cancelled -> repository.markAsAvailable(cancelled.getSlotId()));
     }
 }

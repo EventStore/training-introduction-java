@@ -53,26 +53,26 @@ public class AvailableSlotsProjectionTest extends ProjectionTest {
         repository.getSlotsAvailableOn(LocalDate.now()));
   }
 
-  @Test
-  void shouldRemoveSlotFromTheListIfItWasBooked() {
-    val scheduled = new Scheduled(slotId, now, tenMinutes);
-    val booked = new Booked(scheduled.getSlotId(), randomString());
-
-    given(scheduled, booked);
-    then(List.empty(), repository.getSlotsAvailableOn(LocalDate.now()));
-  }
-
-  @Test
-  void shouldAddSlotAgainIfBookingWasCancelled() {
-    val scheduled = new Scheduled(slotId, now, tenMinutes);
-    val booked = new Booked(scheduled.getSlotId(), randomString());
-    val cancelled = new Cancelled(scheduled.getSlotId(), randomString());
-
-    given(scheduled, booked, cancelled);
-    then(
-        List.of(
-            new AvailableSlot(
-                scheduled.getSlotId(), scheduled.getStartTime(), scheduled.getDuration())),
-        repository.getSlotsAvailableOn(LocalDate.now()));
-  }
+//  @Test
+//  void shouldRemoveSlotFromTheListIfItWasBooked() {
+//    val scheduled = new Scheduled(slotId, now, tenMinutes);
+//    val booked = new Booked(scheduled.getSlotId(), randomString());
+//
+//    given(scheduled, booked);
+//    then(List.empty(), repository.getSlotsAvailableOn(LocalDate.now()));
+//  }
+//
+//  @Test
+//  void shouldAddSlotAgainIfBookingWasCancelled() {
+//    val scheduled = new Scheduled(slotId, now, tenMinutes);
+//    val booked = new Booked(scheduled.getSlotId(), randomString());
+//    val cancelled = new Cancelled(scheduled.getSlotId(), randomString());
+//
+//    given(scheduled, booked, cancelled);
+//    then(
+//        List.of(
+//            new AvailableSlot(
+//                scheduled.getSlotId(), scheduled.getStartTime(), scheduled.getDuration())),
+//        repository.getSlotsAvailableOn(LocalDate.now()));
+//  }
 }

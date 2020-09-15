@@ -38,15 +38,15 @@ public class EsEventSerde {
                         Case(
                                 $(instanceOf(Booked.class)),
                                 booked -> {
-                                    data.put("slotId", booked.getSlotId());
-                                    data.put("patientId", booked.getPatientId());
+//                                    data.put("slotId", booked.getSlotId());
+//                                    data.put("patientId", booked.getPatientId());
                                     return toProposedEvent("booked", eventId, data);
                                 }),
                         Case(
                                 $(instanceOf(Cancelled.class)),
                                 cancelled -> {
-                                    data.put("slotId", cancelled.getSlotId());
-                                    data.put("reason", cancelled.getReason());
+//                                    data.put("slotId", cancelled.getSlotId());
+//                                    data.put("reason", cancelled.getReason());
                                     return toProposedEvent("cancelled", eventId, data);
                                 }));
     }
@@ -81,13 +81,16 @@ public class EsEventSerde {
                                 $(is("booked")),
                                 () ->
                                         new Booked(
-                                                data.get("slotId").asText(),
-                                                data.get("patientId").asText())),
+//                                                data.get("slotId").asText(),
+//                                                data.get("patientId").asText()
+                                                )
+                        ),
                         Case(
                                 $(is("cancelled")),
                                 () ->
                                         new Cancelled(
-                                                data.get("slotId").asText(),
-                                                data.get("reason").asText())));
+//                                                data.get("slotId").asText(),
+//                                                data.get("reason").asText()
+                                        )));
     }
 }

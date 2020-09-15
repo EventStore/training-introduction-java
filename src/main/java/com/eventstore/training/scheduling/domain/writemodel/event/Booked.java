@@ -6,6 +6,4 @@ import lombok.NonNull;
 
 @Data
 public class Booked implements Event {
-  private final @NonNull String slotId;
-  private final @NonNull String patientId;
 }

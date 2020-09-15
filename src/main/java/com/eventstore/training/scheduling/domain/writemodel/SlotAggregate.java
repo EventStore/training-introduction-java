@@ -21,37 +21,16 @@ public class SlotAggregate extends AggregateRoot {
     }
 
     public void schedule(String id, LocalDateTime startTime, Duration duration) {
-        if (isScheduled) {
-            throw new SlotAlreadyScheduled();
-        }
-
-        raise(new Scheduled(id, startTime, duration));
+        // raise a correct event here
+        raise(new Scheduled(null, null, null));
     }
 
     public void cancel(String reason, LocalDateTime cancellationTime) {
-        if (!isBooked) {
-            throw new SlotNotBooked();
-        }
 
-        if (isStarted(cancellationTime)) {
-            throw new SlotAlreadyStarted();
-        }
-
-        if (isBooked && !isStarted(cancellationTime)) {
-            raise(new Cancelled(getId(), reason));
-        }
     }
 
     public void book(String patientId) {
-        if (!isScheduled) {
-            throw new SlotNotScheduled();
-        }
 
-        if (isBooked) {
-            throw new SlotAlreadyBooked();
-        }
-
-        raise(new Booked(getId(), patientId));
     }
 
     private boolean isStarted(LocalDateTime cancellationTime) {

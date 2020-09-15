@@ -6,6 +6,4 @@ import lombok.NonNull;
 
 @Data
 public class Cancelled implements Event {
-  private final @NonNull String slotId;
-  private final @NonNull String reason;
 }

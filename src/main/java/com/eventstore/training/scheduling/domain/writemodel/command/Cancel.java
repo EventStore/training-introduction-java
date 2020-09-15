@@ -8,7 +8,4 @@ import java.time.LocalDateTime;
 
 @Data
 public class Cancel implements Command {
-  public final @NonNull String id;
-  public final @NonNull String reason;
-  public final @NonNull LocalDateTime cancellationTime;
 }

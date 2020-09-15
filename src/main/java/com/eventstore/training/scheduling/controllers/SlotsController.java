@@ -33,9 +33,9 @@ class SlotsController {
     public ResponseEntity<?> book(
             @RequestBody PostBook book,
             @PathVariable("aggregateId") String aggregateId) {
-        val command = new Book(aggregateId, book.patientId);
-
-        dispatcher.dispatch(command);
+//        val command = new Book(aggregateId, book.patientId);
+//
+//        dispatcher.dispatch(command);
 
       return ResponseEntity.status(HttpStatus.OK)
               .header("Location", "/slots/" + aggregateId)
@@ -46,9 +46,9 @@ class SlotsController {
     public ResponseEntity<?> cancel(
             @RequestBody PostCancel cancel,
             @PathVariable("aggregateId") String aggregateId) {
-        val command = new Cancel(aggregateId, cancel.reason, LocalDateTime.now());
-
-      dispatcher.dispatch(command);
+//        val command = new Cancel(aggregateId, cancel.reason, LocalDateTime.now());
+//
+//      dispatcher.dispatch(command);
 
       return ResponseEntity.status(HttpStatus.OK)
               .header("Location", "/slots/" + aggregateId)

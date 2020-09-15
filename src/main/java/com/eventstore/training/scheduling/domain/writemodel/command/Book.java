@@ -6,6 +6,4 @@ import lombok.NonNull;
 
 @Data
 public class Book implements Command {
-  public final @NonNull String id;
-  public final @NonNull String patientId;
 }

@@ -13,14 +13,14 @@ public class Handlers extends CommandHandler {
             aggregateStore.save(aggregate);
         });
         register(Book.class, book -> {
-            var aggregate = aggregateStore.load(SlotAggregate.class, book.getId());
-            aggregate.book(book.getPatientId());
-            aggregateStore.save(aggregate);
+//            var aggregate = aggregateStore.load(SlotAggregate.class, book.getId());
+//            aggregate.book(book.getPatientId());
+//            aggregateStore.save(aggregate);
         });
         register(Cancel.class, cancel -> {
-            var aggregate = aggregateStore.load(SlotAggregate.class, cancel.getId());
-            aggregate.cancel(cancel.getReason(), cancel.getCancellationTime());
-            aggregateStore.save(aggregate);
+//            var aggregate = aggregateStore.load(SlotAggregate.class, cancel.getId());
+//            aggregate.cancel(cancel.getReason(), cancel.getCancellationTime());
+//            aggregateStore.save(aggregate);
         });
     }
 }
