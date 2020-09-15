@@ -38,16 +38,13 @@ public class SlotAggregate extends AggregateRoot {
     }
 
     private void when(Booked booked) {
-        isBooked = true;
+        ;
     }
 
     private void when(Cancelled cancelled) {
-        isBooked = false;
+
     }
 
     private void when(Scheduled scheduled) {
-        isScheduled = true;
-        startTime = scheduled.getStartTime();
-        setId(scheduled.getSlotId());
     }
 }
