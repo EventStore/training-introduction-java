@@ -1,6 +1,6 @@
 package com.eventstore.training.scheduling.infrastructure.eventstore;
 
-import com.eventstore.dbclient.ProposedEvent;
+import com.eventstore.dbclient.EventData;
 import com.eventstore.dbclient.ResolvedEvent;
 import com.eventstore.training.scheduling.domain.writemodel.event.Booked;
 import com.eventstore.training.scheduling.domain.writemodel.event.Cancelled;
@@ -22,7 +22,7 @@ import static io.vavr.Predicates.is;
 public class EsEventSerde {
     final ObjectMapper objectMapper = new ObjectMapper();
 
-    public ProposedEvent serialise(Object object) {
+    public EventData serialise(Object object) {
         UUID eventId = UUID.randomUUID();
         val data = objectMapper.createObjectNode();
         return Match(object)
@@ -33,27 +33,27 @@ public class EsEventSerde {
                                     data.put("slotId", scheduled.getSlotId());
                                     data.put("startTime", scheduled.getStartTime().toString());
                                     data.put("duration", scheduled.getDuration().toString());
-                                    return toProposedEvent("scheduled", eventId, data);
+                                    return toEventData("scheduled", eventId, data);
                                 }),
                         Case(
                                 $(instanceOf(Booked.class)),
                                 booked -> {
                                     data.put("slotId", booked.getSlotId());
                                     data.put("patientId", booked.getPatientId());
-                                    return toProposedEvent("booked", eventId, data);
+                                    return toEventData("booked", eventId, data);
                                 }),
                         Case(
                                 $(instanceOf(Cancelled.class)),
                                 cancelled -> {
                                     data.put("slotId", cancelled.getSlotId());
                                     data.put("reason", cancelled.getReason());
-                                    return toProposedEvent("cancelled", eventId, data);
+                                    return toEventData("cancelled", eventId, data);
                                 }));
     }
 
-    private ProposedEvent toProposedEvent(String eventType, UUID eventId, ObjectNode dataNode) {
+    private EventData toEventData(String eventType, UUID eventId, ObjectNode dataNode) {
         try {
-            return new ProposedEvent(
+            return new EventData(
                     eventId,
                     eventType,
                     "application/json",
