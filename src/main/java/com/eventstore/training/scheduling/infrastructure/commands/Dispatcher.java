@@ -1,6 +1,6 @@
 package com.eventstore.training.scheduling.infrastructure.commands;
 
-import lombok.var;
+import lombok.val;
 
 public class Dispatcher {
     private final CommandHandlerMap map;
@@ -10,7 +10,7 @@ public class Dispatcher {
     }
 
     public void dispatch(Object command) {
-        var handler = map.get(command);
+        val handler = map.get(command);
 
         if (handler.isDefined()) {
             handler.get().accept(command);

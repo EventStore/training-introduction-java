@@ -1,22 +1,27 @@
 package com.eventstore.training.scheduling.infrastructure.projections;
 
-import com.eventstore.dbclient.*;
+import com.eventstore.dbclient.Position;
+import com.eventstore.dbclient.ResolvedEvent;
+import com.eventstore.dbclient.Streams;
+import com.eventstore.dbclient.SubscriptionListener;
 import com.eventstore.training.scheduling.infrastructure.eventstore.EsEventSerde;
 import io.vavr.collection.List;
+import lombok.SneakyThrows;
 import lombok.val;
 
 public class SubscriptionManager {
-    private final StreamsClient client;
+    private final Streams client;
     private final List<Subscription> subscriptions;
     private final EsEventSerde serde = new EsEventSerde();
 
-    public SubscriptionManager(StreamsClient client, List<Subscription> subscriptions) {
+    public SubscriptionManager(Streams client, List<Subscription> subscriptions) {
         this.client = client;
         this.subscriptions = subscriptions;
     }
 
+    @SneakyThrows
     public void start() {
-        client.subscribeToAll(Position.START, false, new Listener());
+        client.subscribeToAll(new Listener()).fromStart().resolveLinks(false).execute();
     }
 
     private void eventAppeared(ResolvedEvent event) {
