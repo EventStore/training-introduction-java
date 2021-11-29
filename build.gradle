@@ -23,7 +23,7 @@ repositories {
 dependencies {
 	compile 'io.vavr:vavr:0.10.2'
 
-	implementation 'com.eventstore:db-client-java:0.5'
+	implementation 'com.eventstore:db-client-java:1.0.0'
 
 	implementation "com.google.protobuf:protobuf-java:3.12.1"
 
