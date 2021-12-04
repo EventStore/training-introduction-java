@@ -13,10 +13,10 @@ import org.slf4j.LoggerFactory;
 public class ESEventStore implements EventStore {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final Streams client;
+    private final EventStoreDBClient client;
     private final EsEventSerde serde = new EsEventSerde();
 
-    public ESEventStore(Streams client) {
+    public ESEventStore(EventStoreDBClient client) {
         this.client = client;
     }
 
@@ -29,11 +29,13 @@ public class ESEventStore implements EventStore {
 
         java.util.Iterator<EventData> preparedEvents = events.map(serde::serialise).iterator();
 
-        if (version == -1L) {
-            client.appendStream(streamName).expectedRevision(ExpectedRevision.NO_STREAM).addEvents(preparedEvents).execute().get();
-        } else {
-            client.appendStream(streamName).expectedRevision(ExpectedRevision.expectedRevision(version)).addEvents(preparedEvents).execute().get();
-        }
+        ExpectedRevision expectedRevision =
+                version == -1L ? ExpectedRevision.NO_STREAM : ExpectedRevision.expectedRevision(version);
+
+        AppendToStreamOptions options = AppendToStreamOptions.get()
+                .expectedRevision(expectedRevision);
+
+        client.appendToStream(streamName, options, preparedEvents).get();
     }
 
     @SneakyThrows
@@ -41,8 +43,8 @@ public class ESEventStore implements EventStore {
     public List<Object> loadEvents(String streamId) {
         val result =
                 Try.of(() -> client
-                        .readStream(streamId).forward().fromStart().notResolveLinks().execute(4096)
-                        .get()).map(ReadResult::getEvents).map(List::ofAll).getOrElse(List.empty());
+                        .readStream(streamId).get()
+                ).map(ReadResult::getEvents).map(List::ofAll).getOrElse(List.empty());
 
         return result.map(serde::deserialise);
     }
