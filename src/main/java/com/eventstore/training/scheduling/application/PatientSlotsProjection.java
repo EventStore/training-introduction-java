@@ -12,9 +12,9 @@ public class PatientSlotsProjection extends Projection {
     public PatientSlotsProjection(PatientSlotsRepository repository) {
         when(Scheduled.class, scheduled -> repository.add(
                 new AvailableSlot(
-                        scheduled.getSlotId(),
-                        scheduled.getStartTime(),
-                        scheduled.getDuration()))
+                        scheduled.slotId(),
+                        scheduled.startTime(),
+                        scheduled.duration()))
         );
     }
 }

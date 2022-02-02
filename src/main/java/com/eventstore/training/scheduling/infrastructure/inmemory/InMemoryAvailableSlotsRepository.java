@@ -30,6 +30,6 @@ public class InMemoryAvailableSlotsRepository implements AvailableSlotsRepositor
 
   @Override
   public List<AvailableSlot> getSlotsAvailableOn(LocalDate date) {
-    return available.filter(slot -> slot.getStartTime().toLocalDate().isEqual(date));
+    return available.filter(slot -> slot.startTime().toLocalDate().isEqual(date));
   }
 }

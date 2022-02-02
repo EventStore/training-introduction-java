@@ -1,6 +1,5 @@
 package com.eventstore.training.scheduling.infrastructure.projections;
 
-import com.eventstore.training.scheduling.infrastructure.projections.EventHandler;
 import io.vavr.collection.List;
 import lombok.Getter;
 
@@ -16,13 +15,13 @@ public class Projection {
 
   public void handle(Object event) {
     handlers.forEach(handler -> {
-      if (handler.getType() == event.getClass()) {
-        handler.getHandler().accept(event);
+      if (handler.type() == event.getClass()) {
+        handler.handler().accept(event);
       }
     });
   }
 
   public boolean canHandle(Object event) {
-    return handlers.exists(handler -> handler.getType() == event.getClass());
+    return handlers.exists(handler -> handler.type() == event.getClass());
   }
 }
