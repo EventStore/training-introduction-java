@@ -6,12 +6,7 @@ import com.eventstore.training.scheduling.eventsourcing.EventStore;
 import lombok.SneakyThrows;
 import lombok.val;
 
-public class EsAggregateStore implements AggregateStore {
-    private final EventStore esEventStore;
-
-    public EsAggregateStore(EventStore esEventStore) {
-        this.esEventStore = esEventStore;
-    }
+public record EsAggregateStore(EventStore esEventStore) implements AggregateStore {
 
     @Override
     public <T extends AggregateRoot> void save(T aggregate) {
@@ -27,14 +22,14 @@ public class EsAggregateStore implements AggregateStore {
     }
 
     private <T extends AggregateRoot> String getStreamName(Class<T> clazz, String aggregateId) {
-        return clazz.getSimpleName() + "-" + aggregateId;
+        return "%s-%s".formatted(clazz.getSimpleName(), aggregateId);
     }
 
     @SneakyThrows
     @Override
     public <T extends AggregateRoot> T load(Class<T> clazz, String aggregateId) {
         val streamName = getStreamName(clazz, aggregateId);
-        val aggregate = clazz.newInstance();
+        val aggregate = clazz.getDeclaredConstructor().newInstance();
         aggregate.setId(aggregateId);
 
         val events = esEventStore.loadEvents(streamName);
