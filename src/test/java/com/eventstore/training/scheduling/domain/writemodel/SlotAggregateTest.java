@@ -37,7 +37,7 @@ public class SlotAggregateTest extends AggregateTest<SlotAggregate> {
     @Test
     void shouldBeScheduled() {
         Schedule command = new Schedule(slotId, now, tenMinutes);
-        Scheduled scheduled = new Scheduled(slotId, command.startTime, command.duration);
+        Scheduled scheduled = new Scheduled(slotId, command.startTime(), command.duration());
 
         given();
         when(command);
@@ -58,7 +58,7 @@ public class SlotAggregateTest extends AggregateTest<SlotAggregate> {
     void shouldBeBooked() {
         Scheduled scheduled = new Scheduled(slotId, now, tenMinutes);
         val command = new Book(slotId, patientId);
-        Booked booked = new Booked(slotId, command.patientId);
+        Booked booked = new Booked(slotId, command.patientId());
 
         given(scheduled);
         when(command);
@@ -90,7 +90,7 @@ public class SlotAggregateTest extends AggregateTest<SlotAggregate> {
         Scheduled scheduled = new Scheduled(slotId, now, tenMinutes);
         Booked booked = new Booked(slotId, patientId);
         Cancel command = new Cancel(slotId, "No longer needed", now);
-        Cancelled cancelled = new Cancelled(slotId, command.getReason());
+        Cancelled cancelled = new Cancelled(slotId, command.reason());
 
         given(scheduled, booked);
         when(command);
@@ -103,7 +103,7 @@ public class SlotAggregateTest extends AggregateTest<SlotAggregate> {
         Booked booked = new Booked(slotId, patientId);
         Cancelled cancelled = new Cancelled(slotId, patientId);
         Book command = new Book(slotId, patientId);
-        Booked booked2 = new Booked(slotId, command.patientId);
+        Booked booked2 = new Booked(slotId, command.patientId());
 
         given(scheduled, booked, cancelled);
         when(command);

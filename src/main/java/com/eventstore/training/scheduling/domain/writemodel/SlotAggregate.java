@@ -68,7 +68,7 @@ public class SlotAggregate extends AggregateRoot {
 
     private void when(Scheduled scheduled) {
         isScheduled = true;
-        startTime = scheduled.getStartTime();
-        setId(scheduled.getSlotId());
+        startTime = scheduled.startTime();
+        setId(scheduled.slotId());
     }
 }

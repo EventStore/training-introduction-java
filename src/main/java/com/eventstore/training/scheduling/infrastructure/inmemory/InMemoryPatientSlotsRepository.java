@@ -27,26 +27,26 @@ public class InMemoryPatientSlotsRepository implements PatientSlotsRepository {
   public void markAsBooked(String slotId, String patientId) {
     PatientSlot updated =
         available
-            .filter(slot -> slot.getSlotId().equals(slotId))
+            .filter(slot -> slot.slotId().equals(slotId))
             .map(
                 available ->
                     new PatientSlot(
-                        available.getSlotId(),
-                        available.getStartTime(),
-                        available.getDuration(),
+                        available.slotId(),
+                        available.startTime(),
+                        available.duration(),
                         "booked"))
             .head();
     patientSlots =
         patientSlots.put(
             patientId, patientSlots.getOrElse(patientId, List.empty()).append(updated));
-    available = available.filter(slot -> !slot.getSlotId().equals(slotId));
+    available = available.filter(slot -> !slot.slotId().equals(slotId));
   }
 
   @Override
   public void markAsCancelled(String slotId) {
     val tuple =
         patientSlots
-            .filterValues(slots -> slots.filter(slot -> slot.getSlotId().equals(slotId)).nonEmpty())
+            .filterValues(slots -> slots.filter(slot -> slot.slotId().equals(slotId)).nonEmpty())
             .mapValues(Traversable::head)
             .head();
     val patientId = tuple._1;
@@ -59,9 +59,9 @@ public class InMemoryPatientSlotsRepository implements PatientSlotsRepository {
                 .getOrElse(patientId, List.empty())
                 .map(
                     slot -> {
-                      if (slot.getSlotId().equals(slotId)) {
+                      if (slot.slotId().equals(slotId)) {
                         return new PatientSlot(
-                            slot.getSlotId(), slot.getStartTime(), slot.getDuration(), "cancelled");
+                            slot.slotId(), slot.startTime(), slot.duration(), "cancelled");
                       } else {
                         return slot;
                       }
@@ -70,9 +70,9 @@ public class InMemoryPatientSlotsRepository implements PatientSlotsRepository {
     available =
         available.append(
             new AvailableSlot(
-                cancelledSlot.getSlotId(),
-                cancelledSlot.getStartTime(),
-                cancelledSlot.getDuration()));
+                cancelledSlot.slotId(),
+                cancelledSlot.startTime(),
+                cancelledSlot.duration()));
   }
 
   @Override
