@@ -11,12 +11,12 @@ public class AvailableSlotsProjection extends Projection {
     public AvailableSlotsProjection(AvailableSlotsRepository repository) {
         when(Scheduled.class, scheduled -> repository.add(
                     new AvailableSlot(
-                            scheduled.getSlotId(),
-                            scheduled.getStartTime(),
-                            scheduled.getDuration())));
+                            scheduled.slotId(),
+                            scheduled.startTime(),
+                            scheduled.duration())));
 
-//        when(Booked.class, booked -> repository.markAsUnavailable(booked.getSlotId()));
+//        when(Booked.class, booked -> repository.markAsUnavailable(booked.slotId()));
 //
-//        when(Cancelled.class, cancelled -> repository.markAsAvailable(cancelled.getSlotId()));
+//        when(Cancelled.class, cancelled -> repository.markAsAvailable(cancelled.slotId()));
     }
 }

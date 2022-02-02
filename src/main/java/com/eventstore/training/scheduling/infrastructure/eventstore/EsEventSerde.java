@@ -15,40 +15,33 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static io.vavr.API.*;
-import static io.vavr.Predicates.instanceOf;
-import static io.vavr.Predicates.is;
-
 public class EsEventSerde {
     final ObjectMapper objectMapper = new ObjectMapper();
 
     public EventData serialise(Object object) {
         UUID eventId = UUID.randomUUID();
         val data = objectMapper.createObjectNode();
-        return Match(object)
-                .of(
-                        Case(
-                                $(instanceOf(Scheduled.class)),
-                                scheduled -> {
-                                    data.put("slotId", scheduled.getSlotId());
-                                    data.put("startTime", scheduled.getStartTime().toString());
-                                    data.put("duration", scheduled.getDuration().toString());
-                                    return toEventData("scheduled", eventId, data);
-                                }),
-                        Case(
-                                $(instanceOf(Booked.class)),
-                                booked -> {
-//                                    data.put("slotId", booked.getSlotId());
-//                                    data.put("patientId", booked.getPatientId());
-                                    return toEventData("booked", eventId, data);
-                                }),
-                        Case(
-                                $(instanceOf(Cancelled.class)),
-                                cancelled -> {
-//                                    data.put("slotId", cancelled.getSlotId());
-//                                    data.put("reason", cancelled.getReason());
-                                    return toEventData("cancelled", eventId, data);
-                                }));
+
+        return switch (object)
+           {
+               case Scheduled scheduled -> {
+                   data.put("slotId", scheduled.slotId());
+                   data.put("startTime", scheduled.startTime().toString());
+                   data.put("duration", scheduled.duration().toString());
+                   yield toEventData("scheduled", eventId, data);
+    }
+               case Cancelled cancelled -> {
+//                   data.put("slotId", cancelled.slotId());
+//                   data.put("reason", cancelled.reason());
+                   yield toEventData("cancelled", eventId, data);
+               }
+               case Booked booked -> {
+//                   data.put("slotId", booked.slotId());
+//                   data.put("patientId", booked.patientId());
+                   yield toEventData("booked", eventId, data);
+               }
+               default -> throw new IllegalStateException("Unexpected value: %s".formatted(object));
+           };
     }
 
     private EventData toEventData(String eventType, UUID eventId, ObjectNode dataNode) {
@@ -68,29 +61,26 @@ public class EsEventSerde {
     @SneakyThrows
     public Object deserialise(ResolvedEvent event) {
         val data = objectMapper.readTree(event.getEvent().getEventData());
-        return Match(event.getEvent().getEventType())
-                .of(
-                        Case(
-                                $(is("scheduled")),
-                                () ->
+        val eventType = event.getEvent().getEventType();
+
+        return switch (eventType){
+            case "scheduled" ->
                                         new Scheduled(
                                                 data.get("slotId").asText(),
                                                 LocalDateTime.parse(data.get("startTime").asText()),
-                                                Duration.parse(data.get("duration").asText()))),
-                        Case(
-                                $(is("booked")),
-                                () ->
+                    Duration.parse(data.get("duration").asText())
+                );
+            case "booked" ->
                                         new Booked(
-//                                                data.get("slotId").asText(),
-//                                                data.get("patientId").asText()
-                                                )
-                        ),
-                        Case(
-                                $(is("cancelled")),
-                                () ->
+//                    data.get("slotId").asText(),
+//                    data.get("patientId").asText()
+                );
+            case "cancelled" ->
                                         new Cancelled(
-//                                                data.get("slotId").asText(),
-//                                                data.get("reason").asText()
-                                        )));
+//                    data.get("slotId").asText(),
+//                    data.get("reason").asText()
+                );
+            default -> throw new IllegalStateException("Unexpected value: %s".formatted(eventType));
+        };
     }
 }

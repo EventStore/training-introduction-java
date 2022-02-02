@@ -20,12 +20,12 @@ class SlotsController {
 
     @PostMapping
     public ResponseEntity<?> schedule(@RequestBody PostSchedule schedule) {
-        val aggregateId = schedule.startDateTime.toString();
-        val command = new Schedule(aggregateId, schedule.startDateTime, schedule.duration);
+        val aggregateId = schedule.startDateTime().toString();
+        val command = new Schedule(aggregateId, schedule.startDateTime(), schedule.duration());
         dispatcher.dispatch(command);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .header("Location", "/slots/" + aggregateId)
+                .header("Location", "/slots/%s".formatted(aggregateId))
                 .body(null);
     }
 
@@ -33,12 +33,10 @@ class SlotsController {
     public ResponseEntity<?> book(
             @RequestBody PostBook book,
             @PathVariable("aggregateId") String aggregateId) {
-//        val command = new Book(aggregateId, book.patientId);
-//
-//        dispatcher.dispatch(command);
-
+//        val command = new Book(aggregateId, book.patientId());
+////        dispatcher.dispatch(command);
       return ResponseEntity.status(HttpStatus.OK)
-              .header("Location", "/slots/" + aggregateId)
+              .header("Location", "/slots/%s".formatted(aggregateId))
               .body(null);
     }
 
@@ -46,12 +44,10 @@ class SlotsController {
     public ResponseEntity<?> cancel(
             @RequestBody PostCancel cancel,
             @PathVariable("aggregateId") String aggregateId) {
-//        val command = new Cancel(aggregateId, cancel.reason, LocalDateTime.now());
-//
-//      dispatcher.dispatch(command);
-
+//        val command = new Cancel(aggregateId, cancel.reason(), LocalDateTime.now());
+////        dispatcher.dispatch(command);
       return ResponseEntity.status(HttpStatus.OK)
-              .header("Location", "/slots/" + aggregateId)
+              .header("Location", "/slots/%s".formatted(aggregateId))
               .body(null);
     }
 }

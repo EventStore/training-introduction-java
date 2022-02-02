@@ -12,13 +12,13 @@ public class PatientSlotsProjection extends Projection {
     public PatientSlotsProjection(PatientSlotsRepository repository) {
         when(Scheduled.class, scheduled -> repository.add(
                 new AvailableSlot(
-                        scheduled.getSlotId(),
-                        scheduled.getStartTime(),
-                        scheduled.getDuration()))
+                        scheduled.slotId(),
+                        scheduled.startTime(),
+                        scheduled.duration()))
         );
 
-//        when(Booked.class, booked -> repository.markAsBooked(booked.getSlotId(), booked.getPatientId()));
+//        when(Booked.class, booked -> repository.markAsBooked(booked.slotId(), booked.patientId()));
 //
-//        when(Cancelled.class, cancelled -> repository.markAsCancelled(cancelled.getSlotId()));
+//        when(Cancelled.class, cancelled -> repository.markAsCancelled(cancelled.slotId()));
     }
 }

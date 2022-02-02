@@ -58,15 +58,15 @@ public class PatientSlotsProjectionTest extends ProjectionTest {
 //  @Test
 //  void shouldReturnASlotIfWasBooked() {
 //    val scheduled = new Scheduled(slotId, now, tenMinutes);
-//    val booked = new Booked(scheduled.getSlotId(), patientId);
+//    val booked = new Booked(scheduled.slotId(), patientId);
 //
 //    given(scheduled, booked);
 //    then(
 //        List.of(
 //            new PatientSlot(
-//                scheduled.getSlotId(),
-//                scheduled.getStartTime(),
-//                scheduled.getDuration(),
+//                scheduled.slotId(),
+//                scheduled.startTime(),
+//                scheduled.duration(),
 //                "booked")),
 //        repository.getPatientSlots(patientId));
 //  }
@@ -74,16 +74,16 @@ public class PatientSlotsProjectionTest extends ProjectionTest {
 //  @Test
 //  void shouldReturnASlotIfWasCanceled() {
 //    val scheduled = new Scheduled(slotId, now, tenMinutes);
-//    val booked = new Booked(scheduled.getSlotId(), patientId);
-//    val cancelled = new Cancelled(scheduled.getSlotId(), randomString());
+//    val booked = new Booked(scheduled.slotId(), patientId);
+//    val cancelled = new Cancelled(scheduled.slotId(), randomString());
 //
 //    given(scheduled, booked, cancelled);
 //    then(
 //        List.of(
 //            new PatientSlot(
-//                scheduled.getSlotId(),
-//                scheduled.getStartTime(),
-//                scheduled.getDuration(),
+//                scheduled.slotId(),
+//                scheduled.startTime(),
+//                scheduled.duration(),
 //                "cancelled")),
 //        repository.getPatientSlots(patientId));
 //  }
@@ -91,26 +91,26 @@ public class PatientSlotsProjectionTest extends ProjectionTest {
 //  @Test
 //  void shouldReturnBothCancelledAndBooked() {
 //    val scheduled = new Scheduled(slotId, now, tenMinutes);
-//    val booked = new Booked(scheduled.getSlotId(), patientId);
-//    val cancelled = new Cancelled(scheduled.getSlotId(), randomString());
+//    val booked = new Booked(scheduled.slotId(), patientId);
+//    val cancelled = new Cancelled(scheduled.slotId(), randomString());
 //    String patientId2 = patientId + "-2";
-//    val booked2 = new Booked(scheduled.getSlotId(), patientId2);
+//    val booked2 = new Booked(scheduled.slotId(), patientId2);
 //
 //    given(scheduled, booked, cancelled, booked2);
 //    then(
 //        List.of(
 //            new PatientSlot(
-//                scheduled.getSlotId(),
-//                scheduled.getStartTime(),
-//                scheduled.getDuration(),
+//                scheduled.slotId(),
+//                scheduled.startTime(),
+//                scheduled.duration(),
 //                "cancelled")),
 //        repository.getPatientSlots(patientId));
 //    then(
 //        List.of(
 //            new PatientSlot(
-//                scheduled.getSlotId(),
-//                scheduled.getStartTime(),
-//                scheduled.getDuration(),
+//                scheduled.slotId(),
+//                scheduled.startTime(),
+//                scheduled.duration(),
 //                "booked")),
 //        repository.getPatientSlots(patientId2));
 //  }
