@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-	compile 'io.vavr:vavr:0.10.2'
+	implementation 'io.vavr:vavr:0.10.2'
 
 	implementation 'com.eventstore:db-client-java:1.0.0'
 
@@ -42,11 +42,11 @@ dependencies {
 
 	testImplementation('org.junit.jupiter:junit-jupiter:5.6.0')
 
-	compileOnly 'org.projectlombok:lombok:1.18.12'
-	annotationProcessor 'org.projectlombok:lombok:1.18.12'
+	compileOnly 'org.projectlombok:lombok:1.18.22'
+	annotationProcessor 'org.projectlombok:lombok:1.18.22'
 
-	testCompileOnly 'org.projectlombok:lombok:1.18.12'
-	testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
+	testCompileOnly 'org.projectlombok:lombok:1.18.22'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 }
 
 test {
